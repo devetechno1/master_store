@@ -11,7 +11,7 @@ class AppConstants {
   static const double limitOfPickedVideoSizeInMB = 50;
   static const double maxSizeOfASingleFile = 10;
 
-  static const String baseUrl = 'https://gomlaweb.devetechno.co.uk';
+  static const String baseUrl = 'https://gomla.devetechno.co.uk';
 
   static const String configUri = '/api/v1/config';
   static const String loginUri = '/api/v1/auth/vendor/login';
@@ -221,17 +221,17 @@ class AppConstants {
     LanguageModel(
         imageUrl: Images.arabic,
         languageName: 'Arabic',
-        countryCode: 'SA',
+        countryCode: 'EG',
         languageCode: 'ar'),
-    LanguageModel(
-        imageUrl: Images.spanish,
-        languageName: 'Spanish',
-        countryCode: 'ES',
-        languageCode: 'es'),
-    LanguageModel(
-        imageUrl: Images.bangla,
-        languageName: 'Bengali',
-        countryCode: 'BN',
-        languageCode: 'bn'),
+    // LanguageModel(
+    //     imageUrl: Images.spanish,
+    //     languageName: 'Spanish',
+    //     countryCode: 'ES',
+    //     languageCode: 'es'),
+    // LanguageModel(
+    //     imageUrl: Images.bangla,
+    //     languageName: 'Bengali',
+    //     countryCode: 'BN',
+    //     languageCode: 'bn'),
   ];
 }

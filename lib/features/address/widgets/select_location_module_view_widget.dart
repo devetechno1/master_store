@@ -114,6 +114,7 @@ class _SelectLocationAndModuleViewWidgetState extends State<SelectLocationAndMod
                 inputType: TextInputType.text,
                 capitalization: TextCapitalization.sentences,
                 maxLines: 3,
+                minLines: 1,
                 required: true,
                 validator: (value) => ValidateCheck.validateEmptyText(value, "store_address_field_is_required".tr),
               ) : const SizedBox(),

@@ -18,6 +18,7 @@ class CustomTextFieldWidget extends StatefulWidget {
   final Function? onSubmit;
   final bool isEnabled;
   final int maxLines;
+  final int? minLines;
   final TextCapitalization capitalization;
   final String? prefixImage;
   final IconData? prefixIcon;
@@ -52,6 +53,7 @@ class CustomTextFieldWidget extends StatefulWidget {
     this.inputType = TextInputType.text,
     this.inputAction = TextInputAction.next,
     this.maxLines = 1,
+    this.minLines,
     this.onSubmit,
     this.onChanged,
     this.prefixImage,
@@ -98,6 +100,7 @@ class CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
 
         TextFormField(
           maxLines: widget.maxLines,
+          minLines: widget.minLines,
           controller: widget.controller,
           focusNode: widget.focusNode,
           validator: widget.validator,
