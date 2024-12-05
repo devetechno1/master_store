@@ -1,4 +1,4 @@
-package com.devetechno.masterstore
+package com.devetechno.mastervendor
 
 import io.flutter.embedding.android.FlutterActivity
 

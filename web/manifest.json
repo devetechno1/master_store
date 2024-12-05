@@ -1,6 +1,6 @@
 {
-    "name": "Devetechno Store",
-    "short_name": "Devetechno Store",
+    "name": "Devetechno Vendor",
+    "short_name": "Devetechno Vendor",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

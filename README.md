@@ -1,4 +1,4 @@
-# Devetechno Store App
+# Devetechno Vendor App
 
 
 

@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.devetechno.masterstore</string>
+	<string>com.devetechno.mastervendor</string>
 	<key>PROJECT_ID</key>
 	<string>multi-master-1</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:496804581818:ios:25c9b511babe8adf884d83</string>
+	<string>1:496804581818:ios:f238299a573e3068884d83</string>
 </dict>
 </plist>

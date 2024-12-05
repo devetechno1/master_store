@@ -45,6 +45,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:496804581818:android:5a6a8442fdfbce11884d83",
+        "android_client_info": {
+          "package_name": "com.devetechno.mastervendor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP9f-5k7CiZlNOZRr4jqr1JLOYQXBWltc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:496804581818:android:31dee6f2a15abad9884d83",
         "android_client_info": {
           "package_name": "com.master.delivery"
