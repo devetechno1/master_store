@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:sixam_mart_store/features/dashboard/widgets/out_of_stock_warning_bottom_sheet.dart';
+import 'package:sixam_mart_store/features/profile/controllers/profile_controller.dart';
 import 'package:sixam_mart_store/features/subscription/controllers/subscription_controller.dart';
 import 'package:sixam_mart_store/features/disbursement/helper/disbursement_helper.dart';
 import 'package:sixam_mart_store/util/dimensions.dart';
@@ -55,10 +57,25 @@ class DashboardScreenState extends State<DashboardScreen> {
 
     Get.find<SubscriptionController>().trialEndBottomSheet();
 
+    outOfStockBottomSheet();
+
   }
 
   showDisbursementWarningMessage() async{
     disbursementHelper.enableDisbursementWarningMessage(true);
+  }
+
+  Future<void> outOfStockBottomSheet() async {
+    Future.delayed(const Duration(seconds: 1), () {
+      if(Get.find<ProfileController>().profileModel != null && Get.find<ProfileController>().profileModel!.outOfStockCount! > 0 && Get.find<ProfileController>().showLowStockWarning) {
+        showModalBottomSheet(
+          context: Get.context!, isScrollControlled: true, backgroundColor: Colors.transparent,
+          builder: (con) => const OutOfStockWarningBottomSheet(),
+        ).then((v) {
+          Get.find<ProfileController>().hideLowStockWarning();
+        });
+      }
+    });
   }
 
 

@@ -126,6 +126,9 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
     if(isEcommerce) {
       Get.find<StoreController>().getBrandList(widget.item);
     }
+    if(isPharmacy) {
+      Get.find<StoreController>().getSuitableTagList(widget.item);
+    }
     Get.find<StoreController>().getAttributeList(widget.item);
     Get.find<StoreController>().setTag('', isClear: true);
     if(_update) {
@@ -230,6 +233,18 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(categoryController.subCategoryList![i].name!),
+                  ),
+                )));
+              }
+            }
+
+            List<DropdownItem<int>> suitableTagList = [];
+            if(storeController.suitableTagList != null) {
+              for(int i=0; i<storeController.suitableTagList!.length; i++) {
+                suitableTagList.add(DropdownItem<int>(value: i, child: SizedBox(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(storeController.suitableTagList![i].name!),
                   ),
                 )));
               }
@@ -442,6 +457,42 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                       ) : const SizedBox(),
                       SizedBox(height: categoryController.subCategoryList != null && categoryController.subCategoryList!.isNotEmpty ? Dimensions.paddingSizeExtraOverLarge : 0),
 
+                      isPharmacy ? Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                          color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).disabledColor, width: 0.5),
+                        ),
+                        child: CustomDropdown(
+                          onChange: (int? value, int index) {
+                            storeController.setSuitableTagIndex(value!, true);
+                          },
+                          dropdownButtonStyle: DropdownButtonStyle(
+                            height: 45,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Dimensions.paddingSizeExtraSmall,
+                              horizontal: Dimensions.paddingSizeExtraSmall,
+                            ),
+                            primaryColor: Theme.of(context).textTheme.bodyLarge!.color,
+                          ),
+                          iconColor: Theme.of(context).disabledColor,
+                          dropdownStyle: DropdownStyle(
+                            elevation: 10,
+                            borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                            padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
+                          ),
+                          items: suitableTagList,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              widget.item != null && storeController.suitableTagIndex != null ? storeController.suitableTagList![storeController.suitableTagIndex!].name! : 'suitable_for'.tr,
+                              style: robotoRegular.copyWith(color: Theme.of(context).disabledColor),
+                            ),
+                          ),
+                        ),
+                      ) : const SizedBox(),
+                      SizedBox(height: isPharmacy ? Dimensions.paddingSizeExtraOverLarge : 0),
+
                       isEcommerce ? Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
@@ -470,7 +521,7 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                           child: Padding(
                             padding: const EdgeInsets.only(left: 8),
                             child: Text(
-                              widget.item != null ? storeController.brandList![storeController.brandIndex!].name! : 'brand'.tr,
+                              widget.item != null && storeController.brandList != null? storeController.brandList![storeController.brandIndex!].name! : 'brand'.tr,
                               style: robotoRegular.copyWith(color: Theme.of(context).disabledColor),
                             ),
                           ),
@@ -638,7 +689,7 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                                       controller.text = '';
                                     },
                                     decoration: InputDecoration(
-                                      hintText: 'nutrition'.tr,
+                                      hintText: 'type_and_click_add_button'.tr,
                                       labelText: 'nutrition'.tr,
                                       labelStyle: robotoRegular.copyWith(color: Theme.of(context).disabledColor.withOpacity(0.8)),
                                       hintStyle: robotoRegular.copyWith(color: Theme.of(context).disabledColor.withOpacity(0.8)),
@@ -787,7 +838,7 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                                       controller.text = '';
                                     },
                                     decoration: InputDecoration(
-                                      hintText: 'allergic_ingredients'.tr,
+                                      hintText: 'type_and_click_add_button'.tr,
                                       labelText: 'allergic_ingredients'.tr,
                                       hintStyle: robotoRegular.copyWith(color: Theme.of(context).disabledColor.withOpacity(0.8)),
                                       labelStyle: robotoRegular.copyWith(color: Theme.of(context).disabledColor.withOpacity(0.8)),
@@ -1617,6 +1668,7 @@ class _AddItemScreenState extends State<AddItemScreen> with TickerProviderStateM
                     _item.translations!.addAll(translations);
 
                     _item.brandId = storeController.brandList != null && storeController.brandList!.isNotEmpty ? storeController.brandList![storeController.brandIndex!].id : 0;
+                    _item.conditionId = storeController.suitableTagList != null && storeController.suitableTagList!.isNotEmpty ? storeController.suitableTagList![storeController.suitableTagIndex!].id : 0;
                     bool hasEmptyValue = false;
                     if(Get.find<SplashController>().getStoreModuleConfig().newVariation!) {
                       _item.foodVariations = [];

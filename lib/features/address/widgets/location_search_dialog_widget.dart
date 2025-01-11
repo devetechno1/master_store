@@ -22,7 +22,7 @@ class LocationSearchDialogWidget extends StatelessWidget {
       child: Material(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
         child: SizedBox(width: context.width, child: TypeAheadField(
-          builder: (context, controller, focusNode) => TextField(
+          textFieldConfiguration: TextFieldConfiguration(
             controller: searchController,
             textInputAction: TextInputAction.search,
             autofocus: true,
@@ -59,7 +59,7 @@ class LocationSearchDialogWidget extends StatelessWidget {
               ]),
             );
           },
-          onSelected: (PredictionModel suggestion) async {
+          onSuggestionSelected: (PredictionModel suggestion) async {
             Position position = await Get.find<AddressController>().setSuggestedLocation(suggestion.placeId, suggestion.description, mapController);
             Get.back(result: position);
           },

@@ -78,8 +78,8 @@ class ItemViewWidget extends StatelessWidget {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisSpacing: Dimensions.paddingSizeLarge,
             mainAxisSpacing: 0.01,
-            childAspectRatio: 4,
             crossAxisCount: 1,
+            mainAxisExtent: 120,
           ),
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,

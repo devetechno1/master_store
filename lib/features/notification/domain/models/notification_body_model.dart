@@ -6,7 +6,10 @@ enum NotificationType{
   block,
   unblock,
   subscription,
-  product,
+  //ignore: constant_identifier_names
+  product_approve,
+  //ignore: constant_identifier_names
+  product_rejected,
   withdraw,
   campaign,
 }
@@ -65,7 +68,8 @@ class NotificationBodyModel {
       NotificationType.block.toString(): NotificationType.block,
       NotificationType.unblock.toString(): NotificationType.unblock,
       NotificationType.subscription.toString(): NotificationType.subscription,
-      NotificationType.product.toString(): NotificationType.product,
+      NotificationType.product_approve.toString(): NotificationType.product_approve,
+      NotificationType.product_rejected.toString(): NotificationType.product_rejected,
       NotificationType.withdraw.toString(): NotificationType.withdraw,
       NotificationType.campaign.toString(): NotificationType.campaign,
     };

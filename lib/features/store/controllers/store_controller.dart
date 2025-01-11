@@ -4,6 +4,7 @@ import 'package:sixam_mart_store/features/dashboard/screens/dashboard_screen.dar
 import 'package:sixam_mart_store/features/profile/controllers/profile_controller.dart';
 import 'package:sixam_mart_store/features/splash/controllers/splash_controller.dart';
 import 'package:sixam_mart_store/features/store/domain/models/band_model.dart';
+import 'package:sixam_mart_store/features/store/domain/models/suitable_tag_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variant_type_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variation_body_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/item_model.dart';
@@ -26,6 +27,9 @@ class StoreController extends GetxController implements GetxService {
 
   List<Item>? _itemList;
   List<Item>? get itemList => _itemList;
+
+  List<Item>? _stockItemList;
+  List<Item>? get stockItemList => _stockItemList;
 
   List<ReviewModel>? _storeReviewList;
   List<ReviewModel>? get storeReviewList => _storeReviewList;
@@ -156,7 +160,7 @@ class StoreController extends GetxController implements GetxService {
   bool _isPrescriptionRequired = false;
   bool get isPrescriptionRequired => _isPrescriptionRequired;
 
-  int? _brandIndex = 0;
+  int? _brandIndex;
   int? get brandIndex => _brandIndex;
 
   bool _isHalal = false;
@@ -219,6 +223,12 @@ class StoreController extends GetxController implements GetxService {
   bool _isBasicMedicine = false;
   bool get isBasicMedicine => _isBasicMedicine;
 
+  List<SuitableTagModel>? _suitableTagList;
+  List<SuitableTagModel>? get suitableTagList => _suitableTagList;
+
+  int? _suitableTagIndex;
+  int? get suitableTagIndex => _suitableTagIndex;
+
   void initItemData({Item? item, bool isFood = false, bool isGrocery = false, bool isPharmacy = false}) {
     if(isFood || isGrocery) {
       _getNutritionSuggestionList();
@@ -226,14 +236,35 @@ class StoreController extends GetxController implements GetxService {
       _selectedNutritionList = [];
       _selectedAllergicIngredientsList = [];
       if(item != null) {
-        _selectedNutritionList!.addAll(item.nutrition!);
-        _selectedAllergicIngredientsList!.addAll(item.allergies!);
+        if(item.nutrition == null && item.nutritionsData != null) {
+          print('======controller: ${item.nutritionsData}');
+
+          item.nutritionsData?.forEach((nutrition) {
+            _selectedNutritionList!.add(nutrition.nutrition);
+          });
+        } else {
+          _selectedNutritionList!.addAll(item.nutrition??[]);
+        }
+
+        if(item.allergies == null && item.allergiesData != null) {
+          item.allergiesData?.forEach((allergy) {
+            _selectedAllergicIngredientsList!.add(allergy.allergy);
+          });
+        } else {
+          _selectedAllergicIngredientsList!.addAll(item.allergies ?? []);
+        }
       }
     }else if(isPharmacy) {
       _getGenericNameSuggestionList();
       _selectedGenericNameList = [];
       if(item != null) {
-        _selectedGenericNameList!.addAll(item.genericName!);
+        if(item.genericName == null && item.genericNameData != null) {
+          item.genericNameData?.forEach((gen) {
+            _selectedGenericNameList!.add(gen.generic);
+          });
+        } else {
+          _selectedGenericNameList!.addAll(item.genericName!);
+        }
       }
     }
   }
@@ -316,6 +347,35 @@ class StoreController extends GetxController implements GetxService {
           _itemList = [];
         }
         _itemList!.addAll(itemModel.items!);
+        _pageSize = itemModel.totalSize;
+        _isLoading = false;
+        update();
+      }
+    } else {
+      if(isLoading) {
+        _isLoading = false;
+        update();
+      }
+    }
+  }
+
+  Future<void> getLimitedStockItemList(String offset, {bool willUpdate = true}) async {
+    if(offset == '1') {
+      _offsetList = [];
+      _offset = 1;
+      _stockItemList = null;
+      if(willUpdate) {
+        update();
+      }
+    }
+    if (!_offsetList.contains(offset)) {
+      _offsetList.add(offset);
+      ItemModel? itemModel = await storeServiceInterface.getStockItemList(offset);
+      if (itemModel != null) {
+        if (offset == '1') {
+          _stockItemList = [];
+        }
+        _stockItemList!.addAll(itemModel.items!);
         _pageSize = itemModel.totalSize;
         _isLoading = false;
         update();
@@ -614,7 +674,6 @@ class StoreController extends GetxController implements GetxService {
   }
 
   Future<void> getBrandList(Item? item) async {
-    _brandIndex = 0;
     List<BrandModel>? brands = await storeServiceInterface.getBrandList();
     if(brands != null) {
       _brandList = [];
@@ -626,6 +685,23 @@ class StoreController extends GetxController implements GetxService {
 
   void setBrandIndex(int index, bool notify) {
     _brandIndex = index;
+    if(notify) {
+      update();
+    }
+  }
+
+  Future<void> getSuitableTagList(Item? item) async {
+    List<SuitableTagModel>? suitableTagList = await storeServiceInterface.getSuitableTagList();
+    if(suitableTagList != null) {
+      _suitableTagList = [];
+      _suitableTagList!.addAll(suitableTagList);
+      _suitableTagIndex = storeServiceInterface.setSuitableTagIndex(_suitableTagList, item);
+    }
+    update();
+  }
+
+  void setSuitableTagIndex(int index, bool notify) {
+    _suitableTagIndex = index;
     if(notify) {
       update();
     }
@@ -1054,6 +1130,21 @@ class StoreController extends GetxController implements GetxService {
   void removeGenericName(int index) {
     _selectedGenericNameList!.removeAt(index);
     update();
+  }
+
+  Future<bool> stockUpdate(Map<String, String> data, int itemId) async{
+    _isLoading = true;
+    update();
+    Response response = await storeServiceInterface.stockUpdate(data);
+
+    if(response.statusCode == 200) {
+      getItemList('1', type);
+      Get.find<StoreController>().getLimitedStockItemList(Get.find<StoreController>().offset.toString(), willUpdate: false);
+      Get.back();
+    }
+    _isLoading = false;
+    update();
+    return response.statusCode == 200;
   }
 
 }

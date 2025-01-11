@@ -4,7 +4,6 @@ import 'package:sixam_mart_store/features/splash/controllers/splash_controller.d
 import 'package:sixam_mart_store/features/menu/domain/models/menu_model.dart';
 import 'package:sixam_mart_store/helper/responsive_helper.dart';
 import 'package:sixam_mart_store/helper/route_helper.dart';
-import 'package:sixam_mart_store/util/app_constants.dart';
 import 'package:sixam_mart_store/util/dimensions.dart';
 import 'package:sixam_mart_store/util/images.dart';
 import 'package:sixam_mart_store/features/menu/widgets/menu_button_widget.dart';
@@ -53,6 +52,8 @@ class MenuScreen extends StatelessWidget {
       ));
     }
 
+    menuList.add(MenuModel(icon: Images.warning, iconColor: Colors.white, title: 'low_stock'.tr, route: RouteHelper.getLowStockRoute()));
+
     menuList.add(MenuModel(icon: Images.review, title: 'reviews'.tr, route: RouteHelper.getCustomerReviewRoute(), isNotSubscribe: Get.find<ProfileController>().profileModel!.stores![0].storeBusinessModel == 'subscription' && Get.find<ProfileController>().profileModel!.subscription!.review == 0));
 
     menuList.add(MenuModel(icon: Images.mySubscriptionIcon, title: 'my_business_plan'.tr, route: RouteHelper.getMySubscriptionRoute()));
@@ -68,9 +69,7 @@ class MenuScreen extends StatelessWidget {
         ),
       );
     }
-    if(AppConstants.languages.length > 1){
-      menuList.add(MenuModel(icon: Images.language, title: 'language'.tr, route: '', isLanguage: true));
-    }
+    menuList.add(MenuModel(icon: Images.language, title: 'language'.tr, route: '', isLanguage: true));
     menuList.add(MenuModel(icon: Images.coupon, title: 'coupon'.tr, route: RouteHelper.getCouponRoute()));
     menuList.add(MenuModel(icon: Images.expense, title: 'expense_report'.tr, route: RouteHelper.getExpenseRoute()));
 

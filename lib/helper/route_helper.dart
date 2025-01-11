@@ -50,11 +50,11 @@ import 'package:sixam_mart_store/features/pos/screens/pos_screen.dart';
 import 'package:sixam_mart_store/features/profile/screens/profile_screen.dart';
 import 'package:sixam_mart_store/features/profile/screens/update_profile_screen.dart';
 import 'package:sixam_mart_store/features/store/domain/models/review_model.dart';
-import 'package:sixam_mart_store/features/store/screens/add_name_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/add_item_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/announcement_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/image_viewer_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/item_details_screen.dart';
+import 'package:sixam_mart_store/features/store/screens/low_stock_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/pending_item_details_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/pending_item_screen.dart';
 import 'package:sixam_mart_store/features/store/screens/store_screen.dart';
@@ -127,6 +127,7 @@ class RouteHelper {
   static const String advertisementList = '/advertisement-list';
   static const String createAdvertisement = '/create-advertisement';
   static const String advertisementDetails = '/advertisement-details';
+  static const String lowStock = '/low-stock';
 
   static String getInitialRoute() => initial;
   static String getSplashRoute(NotificationBodyModel? body) {
@@ -154,14 +155,6 @@ class RouteHelper {
   static String getCampaignRoute() => campaign;
   static String getCampaignDetailsRoute({int? id, bool fromNotification = false}) => '$campaignDetails?id=$id&from_notification=$fromNotification';
   static String getUpdateRoute(bool isUpdate) => '$update?update=${isUpdate.toString()}';
-  static String getItemRoute(Item? itemModel) {
-    if(itemModel == null) {
-      return '$item?data=null';
-    }
-    List<int> encoded = utf8.encode(jsonEncode(itemModel.toJson()));
-    String data = base64Encode(encoded);
-    return '$item?data=$data';
-  }
   static String getAddItemRoute(Item? itemModel) {
     if(itemModel == null) {
       return '$addItem?data=null';
@@ -223,7 +216,7 @@ class RouteHelper {
   static String getRestaurantRegistrationRoute() => restaurantRegistration;
   static String getCouponRoute() => coupon;
   static String getExpenseRoute() => expense;
-  static String getPendingItemRoute() => pendingItem;
+  static String getPendingItemRoute({bool? fromNotification}) => '$pendingItem?from_notification=${fromNotification.toString()}';
   static String getPendingItemDetailsRoute(int id, ) {
     return '$pendingItemDetails?id=$id';
   }
@@ -263,7 +256,7 @@ class RouteHelper {
   static String getAdvertisementListRoute() => advertisementList;
   static String getCreateAdvertisementRoute() => createAdvertisement;
   static String getAdvertisementDetailsScreen({required int? advertisementId, bool? fromNotification}) => '$advertisementDetails?advertisementId=$advertisementId&fromNotification=$fromNotification';
-
+  static String getLowStockRoute() => lowStock;
 
   static List<GetPage> routes = [
     GetPage(name: initial, page: () => const DashboardScreen(pageIndex: 0)),
@@ -300,14 +293,6 @@ class RouteHelper {
     GetPage(name: store, page: () => const StoreScreen()),
     GetPage(name: campaign, page: () => const CampaignScreen()),
     GetPage(name: campaignDetails, page: () => CampaignDetailsScreen(id: int.parse(Get.parameters['id']!), fromNotification: Get.parameters['from_notification'] == 'true')),
-    GetPage(name: item, page: () {
-      if(Get.parameters['data'] == 'null') {
-        return const AddNameScreen(item: null);
-      }
-      List<int> decode = base64Decode(Get.parameters['data']!.replaceAll(' ', '+'));
-      Item data = Item.fromJson(jsonDecode(utf8.decode(decode)));
-      return AddNameScreen(item: data);
-    }),
     GetPage(name: addItem, page: () {
       if(Get.parameters['data'] == 'null') {
         return const AddItemScreen(item: null);
@@ -331,7 +316,7 @@ class RouteHelper {
     GetPage(name: itemDetails, page: () {
       List<int> decode = base64Decode(Get.parameters['data']!.replaceAll(' ', '+'));
       Item data = Item.fromJson(jsonDecode(utf8.decode(decode)));
-      return ItemDetailsScreen(item: data);
+      return ItemDetailsScreen(product: data);
     }),
     GetPage(name: pos, page: () => const PosScreen()),
     GetPage(name: deliveryMan, page: () => const DeliveryManScreen()),
@@ -372,7 +357,7 @@ class RouteHelper {
     GetPage(name: restaurantRegistration, page: () => const StoreRegistrationScreen()),
     GetPage(name: coupon, page: () => const CouponScreen()),
     GetPage(name: expense, page: () => const ExpenseScreen()),
-    GetPage(name: pendingItem, page: () => const PendingItemScreen()),
+    GetPage(name: pendingItem, page: () => PendingItemScreen(fromNotification: Get.parameters['from_notification'] == 'true')),
     GetPage(name: pendingItemDetails, page: () => PendingItemDetailsScreen(id: int.parse(Get.parameters['id']!))),
     GetPage(name: bannerList, page: () => const BannerListScreen()),
     GetPage(name: addBanner, page: () {
@@ -422,6 +407,6 @@ class RouteHelper {
     GetPage(name: advertisementDetails, page: () => AdvertisementDetailsScreen(
       id: int.parse(Get.parameters['advertisementId']!), fromNotification: Get.parameters['fromNotification'] == 'true',
     )),
-
+    GetPage(name: lowStock, page: () => const LowStockScreen()),
   ];
 }

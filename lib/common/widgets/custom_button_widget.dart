@@ -20,7 +20,7 @@ class CustomButtonWidget extends StatelessWidget {
   final Color? iconColor;
   final bool isLoading;
   const CustomButtonWidget({super.key, this.onPressed, required this.buttonText, this.transparent = false, this.margin, this.iconColor, this.isLoading = false,
-    this.width, this.height, this.fontSize, this.color, this.icon, this.radius = Dimensions.radiusSmall, this.fontWeight, this.isViewReply = false, this.textColor});
+    this.width, this.height, this.fontSize, this.color, this.icon, this.radius = Dimensions.radiusDefault, this.fontWeight, this.isViewReply = false, this.textColor});
 
   @override
   Widget build(BuildContext context) {

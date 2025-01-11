@@ -12,6 +12,7 @@ import 'package:sixam_mart_store/features/store/domain/models/item_model.dart';
 import 'package:sixam_mart_store/features/profile/domain/models/profile_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/pending_item_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/review_model.dart';
+import 'package:sixam_mart_store/features/store/domain/models/suitable_tag_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/unit_model.dart';
 import 'package:sixam_mart_store/util/app_constants.dart';
 import 'package:get/get.dart';
@@ -25,6 +26,16 @@ class StoreRepository implements StoreRepositoryInterface {
   Future<ItemModel?> getItemList(String offset, String type) async {
     ItemModel? itemModel;
     Response response = await apiClient.getData('${AppConstants.itemListUri}?offset=$offset&limit=10&type=$type');
+    if(response.statusCode == 200) {
+      itemModel = ItemModel.fromJson(response.body);
+    }
+    return itemModel;
+  }
+
+  @override
+  Future<ItemModel?> getStockItemList(String offset) async {
+    ItemModel? itemModel;
+    Response response = await apiClient.getData('${AppConstants.stockLimitItemsUri}?offset=$offset&limit=10');
     if(response.statusCode == 200) {
       itemModel = ItemModel.fromJson(response.body);
     }
@@ -102,6 +113,7 @@ class StoreRepository implements StoreRepositoryInterface {
       'maximum_delivery_time': max, 'delivery_time_type': type, 'prescription_order': store.prescriptionStatus! ? '1' : '0',
       'cutlery': store.cutlery! ? '1' : '0', 'translations': jsonEncode(translation), 'free_delivery': store.freeDelivery! ? '1' : '0',
       'extra_packaging_status': store.extraPackagingStatus! ? '1' : '0', 'extra_packaging_amount': store.extraPackagingAmount!.toString(),
+      'minimum_stock_for_warning': store.minimumStockForWarning.toString(),
     });
     if(store.maximumShippingCharge != null){
       fields.addAll({'maximum_delivery_charge':  store.maximumShippingCharge.toString()});
@@ -125,6 +137,7 @@ class StoreRepository implements StoreRepositoryInterface {
 
     if(Get.find<ProfileController>().profileModel!.stores![0].module!.moduleType == 'pharmacy') {
       fields.addAll(<String, String> {'generic_name': genericName});
+      fields.addAll((<String, String> {'condition_id': item.conditionId!.toString()}));
     }
 
     if(Get.find<SplashController>().configModel!.moduleConfig!.module!.stock!) {
@@ -222,6 +235,11 @@ class StoreRepository implements StoreRepositoryInterface {
   }
 
   @override
+  Future<Response> stockUpdate(Map<String, String> data) async {
+    return await apiClient.postData(AppConstants.itemStockUpdateUri, data);
+  }
+
+  @override
   Future<bool> delete(int? id) async {
     Response response = await apiClient.deleteData('${AppConstants.deleteSchedule}$id');
     return (response.statusCode == 200);
@@ -278,6 +296,19 @@ class StoreRepository implements StoreRepositoryInterface {
       });
     }
     return brands;
+  }
+
+  @override
+  Future<List<SuitableTagModel>?> getSuitableTagList() async {
+    List<SuitableTagModel>? suitableTagList;
+    Response response = await apiClient.getData(AppConstants.suitableTagUri);
+    if(response.statusCode == 200) {
+      suitableTagList = [];
+      response.body.forEach((tag) {
+        suitableTagList!.add(SuitableTagModel.fromJson(tag));
+      });
+    }
+    return suitableTagList;
   }
 
   @override

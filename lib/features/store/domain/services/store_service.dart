@@ -8,6 +8,7 @@ import 'package:sixam_mart_store/features/store/domain/models/band_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/item_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/pending_item_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/review_model.dart';
+import 'package:sixam_mart_store/features/store/domain/models/suitable_tag_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/unit_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variant_type_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variation_body_model.dart';
@@ -21,6 +22,11 @@ class StoreService implements StoreServiceInterface {
   @override
   Future<ItemModel?> getItemList(String offset, String type) async {
     return await storeRepositoryInterface.getItemList(offset, type);
+  }
+
+  @override
+  Future<ItemModel?> getStockItemList(String offset) async {
+    return await storeRepositoryInterface.getStockItemList(offset);
   }
 
   @override
@@ -106,6 +112,11 @@ class StoreService implements StoreServiceInterface {
   @override
   Future<List<BrandModel>?> getBrandList() async {
     return await storeRepositoryInterface.getBrandList();
+  }
+
+  @override
+  Future<List<SuitableTagModel>?> getSuitableTagList() async {
+    return await storeRepositoryInterface.getSuitableTagList();
   }
 
   @override
@@ -283,15 +294,28 @@ class StoreService implements StoreServiceInterface {
 
   @override
   int? setBrandIndex(List<BrandModel>? brands, Item? item) {
-    int? brandIndex = 0;
+    int? brandIndex;
     for(int index = 0; index < brands!.length; index++) {
       if(item != null) {
         if(brands[index].id.toString() == item.brandId.toString()) {
-          brandIndex = index + 1;
+          brandIndex = index;
         }
       }
     }
     return brandIndex;
+  }
+
+  @override
+  int? setSuitableTagIndex(List<SuitableTagModel>? suitableTagList, Item? item) {
+    int? suitableTagIndex;
+    for(int index = 0; index < suitableTagList!.length; index++) {
+      if(item != null) {
+        if(suitableTagList[index].id.toString() == item.conditionId.toString()) {
+          suitableTagIndex = index;
+        }
+      }
+    }
+    return suitableTagIndex;
   }
 
   @override
@@ -307,6 +331,11 @@ class StoreService implements StoreServiceInterface {
   @override
   Future<List<String?>?> getGenericNameSuggestionList() async {
     return await storeRepositoryInterface.getGenericNameSuggestionList();
+  }
+
+  @override
+  Future<Response> stockUpdate(Map<String, String> data) async {
+    return await storeRepositoryInterface.stockUpdate(data);
   }
 
 }

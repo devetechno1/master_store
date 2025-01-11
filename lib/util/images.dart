@@ -11,6 +11,7 @@ class Images {
   static const String logOut = 'assets/image/log_out.png';
   static const String profileBg = 'assets/image/profile_bg.png';
   static const String warning = 'assets/image/warning.png';
+  static const String alert = 'assets/image/alert.png';
   static const String lock = 'assets/image/lock.png';
   static const String support = 'assets/image/support.png';
   static const String campaign = 'assets/image/campaign.png';

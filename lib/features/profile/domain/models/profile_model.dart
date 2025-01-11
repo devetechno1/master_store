@@ -41,6 +41,7 @@ class ProfileModel {
   Subscription? subscription;
   SubscriptionOtherData? subscriptionOtherData;
   bool? subscriptionTransactions;
+  int? outOfStockCount;
 
   ProfileModel({
     this.id,
@@ -83,6 +84,7 @@ class ProfileModel {
     this.subscription,
     this.subscriptionOtherData,
     this.subscriptionTransactions,
+    this.outOfStockCount,
   });
 
   ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -143,6 +145,7 @@ class ProfileModel {
     }
     subscriptionOtherData = json['subscription_other_data'] != null ? SubscriptionOtherData.fromJson(json['subscription_other_data']) : null;
     subscriptionTransactions = json['subscription_transactions'] ?? false;
+    outOfStockCount = json['out_of_stock_count'];
   }
 
   Map<String, dynamic> toJson() {
@@ -188,6 +191,7 @@ class ProfileModel {
     data['dynamic_balance'] = dynamicBalance;
     data['show_pay_now_button'] = showPayNowButton;
     data['subscription_transactions'] = subscriptionTransactions;
+    data['out_of_stock_count'] = outOfStockCount;
     return data;
   }
 }
@@ -242,6 +246,7 @@ class Store {
   bool? extraPackagingStatus;
   double? extraPackagingAmount;
   bool? isHalalActive;
+  double? minimumStockForWarning;
 
   Store({
     this.id,
@@ -293,6 +298,7 @@ class Store {
     this.extraPackagingStatus,
     this.extraPackagingAmount,
     this.isHalalActive,
+    this.minimumStockForWarning,
   });
 
   Store.fromJson(Map<String, dynamic> json) {
@@ -350,6 +356,7 @@ class Store {
     extraPackagingStatus = json['extra_packaging_status'] ?? false;
     extraPackagingAmount = json['extra_packaging_amount']?.toDouble();
     isHalalActive = json['halal_tag_status'] ?? false;
+    minimumStockForWarning = json['minimum_stock_for_warning']?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
@@ -409,6 +416,7 @@ class Store {
     data['extra_packaging_status'] = extraPackagingStatus;
     data['extra_packaging_amount'] = extraPackagingAmount;
     data['halal_tag_status'] = isHalalActive;
+    data['minimum_stock_for_warning'] = minimumStockForWarning;
     return data;
   }
 }

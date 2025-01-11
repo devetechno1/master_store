@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.devetechno.mastervendor">
+    package="com.sixamtech.sixam_mart_store_app">
 
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -27,13 +27,14 @@
         </queries>
 
         <application
-            android:label="Devetechno Vendor"
+            android:label="6amMart Store"
             android:name="${applicationName}"
+            android:extractNativeLibs="true"
             android:requestLegacyExternalStorage="true"
             android:usesCleartextTraffic="true"
             android:icon="@mipmap/ic_launcher">
             <meta-data android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDQgdcDWlNJ6o8BU3972EF8P3SKLltqFj8"/>
+                android:value="AIzaSyCaCSJ0BZItSyXqBv8vpD1N4WBffJeKhLQ"/>
 
             <activity
                 android:name=".MainActivity"
@@ -63,7 +64,7 @@
 
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_channel_id"
-                android:value="devetechno" />
+                android:value="6ammart" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -78,8 +79,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/notification_icon" />
     </application>
 </manifest>

@@ -6,12 +6,14 @@ import 'package:sixam_mart_store/features/store/domain/models/item_model.dart';
 import 'package:sixam_mart_store/features/profile/domain/models/profile_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/pending_item_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/review_model.dart';
+import 'package:sixam_mart_store/features/store/domain/models/suitable_tag_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/unit_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variant_type_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/variation_body_model.dart';
 
 abstract class StoreServiceInterface {
   Future<ItemModel?> getItemList(String offset, String type);
+  Future<ItemModel?> getStockItemList(String offset);
   Future<PendingItemModel?> getPendingItemList(String offset, String type);
   Future<Item?> getPendingItemDetails(int itemId);
   Future<Item?> getItemDetails(int itemId);
@@ -40,4 +42,7 @@ abstract class StoreServiceInterface {
   Future<List<String?>?> getNutritionSuggestionList();
   Future<List<String?>?> getAllergicIngredientsSuggestionList();
   Future<List<String?>?> getGenericNameSuggestionList();
+  Future<Response> stockUpdate(Map<String, String> data);
+  Future<List<SuitableTagModel>?> getSuitableTagList();
+  int? setSuitableTagIndex(List<SuitableTagModel>? suitableTag, Item? item);
 }

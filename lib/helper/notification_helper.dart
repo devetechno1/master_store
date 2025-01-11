@@ -18,55 +18,34 @@ import 'package:http/http.dart' as http;
 import 'package:sixam_mart_store/features/dashboard/widgets/new_request_dialog_widget.dart';
 
 class NotificationHelper {
-  static Future<void> initialize(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    var androidInitialize =
-        const AndroidInitializationSettings('notification_icon');
+
+  static Future<void> initialize(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    var androidInitialize = const AndroidInitializationSettings('notification_icon');
     var iOSInitialize = const DarwinInitializationSettings();
-    var initializationsSettings =
-        InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestNotificationsPermission();
-    flutterLocalNotificationsPlugin.initialize(initializationsSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse load) async {
-      try {
-        if (load.payload!.isNotEmpty) {
-          NotificationBodyModel payload =
-              NotificationBodyModel.fromJson(jsonDecode(load.payload!));
+    var initializationsSettings = InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
+    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation < AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
+    flutterLocalNotificationsPlugin.initialize(initializationsSettings, onDidReceiveNotificationResponse: (NotificationResponse load) async{
+      try{
+        if(load.payload!.isNotEmpty){
+          NotificationBodyModel payload = NotificationBodyModel.fromJson(jsonDecode(load.payload!));
 
           final Map<NotificationType, Function> notificationActions = {
-            NotificationType.order: () => Get.toNamed(
-                RouteHelper.getOrderDetailsRoute(payload.orderId,
-                    fromNotification: true)),
-            NotificationType.advertisement: () => Get.toNamed(
-                RouteHelper.getAdvertisementDetailsScreen(
-                    advertisementId: payload.advertisementId,
-                    fromNotification: true)),
-            NotificationType.block: () =>
-                Get.offAllNamed(RouteHelper.getSignInRoute()),
-            NotificationType.unblock: () =>
-                Get.offAllNamed(RouteHelper.getSignInRoute()),
-            NotificationType.withdraw: () =>
-                Get.to(const DashboardScreen(pageIndex: 3)),
-            NotificationType.campaign: () => Get.toNamed(
-                RouteHelper.getCampaignDetailsRoute(
-                    id: payload.campaignId, fromNotification: true)),
-            NotificationType.message: () => Get.toNamed(
-                RouteHelper.getChatRoute(
-                    notificationBody: payload,
-                    conversationId: payload.conversationId,
-                    fromNotification: true)),
-            NotificationType.subscription: () => Get.toNamed(
-                RouteHelper.getMySubscriptionRoute(fromNotification: true)),
-            NotificationType.general: () => Get.toNamed(
-                RouteHelper.getNotificationRoute(fromNotification: true)),
+            NotificationType.order: () => Get.toNamed(RouteHelper.getOrderDetailsRoute(payload.orderId, fromNotification: true)),
+            NotificationType.advertisement: () => Get.toNamed(RouteHelper.getAdvertisementDetailsScreen(advertisementId: payload.advertisementId, fromNotification: true)),
+            NotificationType.block: () => Get.offAllNamed(RouteHelper.getSignInRoute()),
+            NotificationType.unblock: () => Get.offAllNamed(RouteHelper.getSignInRoute()),
+            NotificationType.withdraw: () => Get.to(const DashboardScreen(pageIndex: 3)),
+            NotificationType.campaign: () => Get.toNamed(RouteHelper.getCampaignDetailsRoute(id: payload.campaignId, fromNotification: true)),
+            NotificationType.message: () => Get.toNamed(RouteHelper.getChatRoute(notificationBody: payload, conversationId: payload.conversationId, fromNotification: true)),
+            NotificationType.subscription: () => Get.toNamed(RouteHelper.getMySubscriptionRoute(fromNotification: true)),
+            NotificationType.product_approve: () => Get.offAll(const DashboardScreen(pageIndex: 2)),
+            NotificationType.product_rejected: () => Get.toNamed(RouteHelper.getPendingItemRoute(fromNotification: true)),
+            NotificationType.general: () => Get.toNamed(RouteHelper.getNotificationRoute(fromNotification: true)),
           };
 
           notificationActions[payload.notificationType]?.call();
         }
-      } catch (_) {}
+      }catch(_){}
       return;
     });
 
@@ -74,54 +53,36 @@ class NotificationHelper {
       debugPrint("onMessage message type:${message.data['type']}");
       debugPrint("onMessage message :${message.data}");
 
-      if (message.data['type'] == 'message' &&
-          Get.currentRoute.startsWith(RouteHelper.chatScreen)) {
-        if (Get.find<AuthController>().isLoggedIn()) {
+      if(message.data['type'] == 'message' && Get.currentRoute.startsWith(RouteHelper.chatScreen)) {
+        if(Get.find<AuthController>().isLoggedIn()) {
           Get.find<ChatController>().getConversationList(1);
-          if (Get.find<ChatController>()
-                  .messageModel!
-                  .conversation!
-                  .id
-                  .toString() ==
-              message.data['conversation_id'].toString()) {
+          if(Get.find<ChatController>().messageModel!.conversation!.id.toString() == message.data['conversation_id'].toString()) {
             Get.find<ChatController>().getMessages(
-              1,
-              NotificationBodyModel(
-                notificationType: NotificationType.message,
-                customerId:
-                    message.data['sender_type'] == AppConstants.user ? 0 : null,
-                deliveryManId:
-                    message.data['sender_type'] == AppConstants.deliveryMan
-                        ? 0
-                        : null,
-              ),
-              null,
-              int.parse(message.data['conversation_id'].toString()),
+              1, NotificationBodyModel(
+              notificationType: NotificationType.message,
+              customerId: message.data['sender_type'] == AppConstants.user ? 0 : null,
+              deliveryManId: message.data['sender_type'] == AppConstants.deliveryMan ? 0 : null,
+            ),
+              null, int.parse(message.data['conversation_id'].toString()),
             );
-          } else {
-            NotificationHelper.showNotification(
-                message, flutterLocalNotificationsPlugin);
+          }else {
+            NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
           }
         }
-      } else if (message.data['type'] == 'message' &&
-          Get.currentRoute.startsWith(RouteHelper.conversationListScreen)) {
-        if (Get.find<AuthController>().isLoggedIn()) {
+      }else if(message.data['type'] == 'message' && Get.currentRoute.startsWith(RouteHelper.conversationListScreen)) {
+        if(Get.find<AuthController>().isLoggedIn()) {
           Get.find<ChatController>().getConversationList(1);
         }
-        NotificationHelper.showNotification(
-            message, flutterLocalNotificationsPlugin);
-      } else {
-        NotificationHelper.showNotification(
-            message, flutterLocalNotificationsPlugin);
+        NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
+      }else {
+        NotificationHelper.showNotification(message, flutterLocalNotificationsPlugin);
 
-        if (message.data['type'] == 'new_order' ||
-            message.data['title'] == 'New order placed') {
+        if (message.data['type'] == 'new_order' || message.data['title'] == 'New order placed') {
           Get.find<OrderController>().getPaginatedOrders(1, true);
           Get.find<OrderController>().getCurrentOrders();
 
-          Get.dialog(NewRequestDialogWidget(
-              orderId: int.parse(message.data['order_id'])));
-        } else if (message.data['type'] == 'advertisement') {
+          Get.dialog(NewRequestDialogWidget(orderId: int.parse(message.data['order_id'])));
+        }else if(message.data['type'] == 'advertisement') {
           Get.find<AdvertisementController>().getAdvertisementList('1', 'all');
         }
         Get.find<NotificationController>().getNotificationList();
@@ -132,158 +93,94 @@ class NotificationHelper {
       debugPrint("onOpenApp message type:${message.data['type']}");
       debugPrint("onOpenApp message :${message.data}");
 
-      try {
-        NotificationBodyModel notificationBody =
-            convertNotification(message.data);
+      try{
+        NotificationBodyModel notificationBody = convertNotification(message.data);
 
         final Map<NotificationType, Function> notificationActions = {
-          NotificationType.order: () => Get.toNamed(
-              RouteHelper.getOrderDetailsRoute(
-                  int.parse(message.data['order_id']),
-                  fromNotification: true)),
-          NotificationType.advertisement: () => Get.toNamed(
-              RouteHelper.getAdvertisementDetailsScreen(
-                  advertisementId: notificationBody.advertisementId,
-                  fromNotification: true)),
-          NotificationType.block: () =>
-              Get.offAllNamed(RouteHelper.getSignInRoute()),
-          NotificationType.unblock: () =>
-              Get.offAllNamed(RouteHelper.getSignInRoute()),
-          NotificationType.withdraw: () =>
-              Get.to(const DashboardScreen(pageIndex: 3)),
-          NotificationType.campaign: () => Get.toNamed(
-              RouteHelper.getCampaignDetailsRoute(
-                  id: notificationBody.campaignId, fromNotification: true)),
-          NotificationType.message: () => Get.toNamed(RouteHelper.getChatRoute(
-              notificationBody: notificationBody,
-              conversationId: notificationBody.conversationId,
-              fromNotification: true)),
-          NotificationType.subscription: () => Get.toNamed(
-              RouteHelper.getMySubscriptionRoute(fromNotification: true)),
-          NotificationType.general: () => Get.toNamed(
-              RouteHelper.getNotificationRoute(fromNotification: true)),
+          NotificationType.order: () => Get.toNamed(RouteHelper.getOrderDetailsRoute(int.parse(message.data['order_id']), fromNotification: true)),
+          NotificationType.advertisement: () => Get.toNamed(RouteHelper.getAdvertisementDetailsScreen(advertisementId:  notificationBody.advertisementId, fromNotification: true)),
+          NotificationType.block: () => Get.offAllNamed(RouteHelper.getSignInRoute()),
+          NotificationType.unblock: () => Get.offAllNamed(RouteHelper.getSignInRoute()),
+          NotificationType.withdraw: () => Get.to(const DashboardScreen(pageIndex: 3)),
+          NotificationType.campaign: () => Get.toNamed(RouteHelper.getCampaignDetailsRoute(id: notificationBody.campaignId, fromNotification: true)),
+          NotificationType.message: () => Get.toNamed(RouteHelper.getChatRoute(notificationBody: notificationBody, conversationId: notificationBody.conversationId, fromNotification: true)),
+          NotificationType.subscription: () => Get.toNamed(RouteHelper.getMySubscriptionRoute(fromNotification: true)),
+          NotificationType.product_approve: () => Get.offAll(const DashboardScreen(pageIndex: 2)),
+          NotificationType.product_rejected: () => Get.toNamed(RouteHelper.getPendingItemRoute(fromNotification: true)),
+          NotificationType.general: () => Get.toNamed(RouteHelper.getNotificationRoute(fromNotification: true)),
         };
 
         notificationActions[notificationBody.notificationType]?.call();
-      } catch (_) {}
+      }catch (_){}
     });
   }
 
-  static Future<void> showNotification(
-      RemoteMessage message, FlutterLocalNotificationsPlugin fln) async {
-    if (!GetPlatform.isIOS) {
+  static Future<void> showNotification(RemoteMessage message, FlutterLocalNotificationsPlugin fln) async {
+    if(!GetPlatform.isIOS) {
       String? title;
       String? body;
       String? image;
-      NotificationBodyModel notificationBody =
-          convertNotification(message.data);
+      NotificationBodyModel notificationBody = convertNotification(message.data);
 
       title = message.data['title'];
       body = message.data['body'];
-      image = (message.data['image'] != null &&
-              message.data['image'].isNotEmpty)
-          ? message.data['image'].startsWith('http')
-              ? message.data['image']
-              : '${AppConstants.baseUrl}/storage/app/public/notification/${message.data['image']}'
-          : null;
+      image = (message.data['image'] != null && message.data['image'].isNotEmpty) ? message.data['image'].startsWith('http') ? message.data['image']
+        : '${AppConstants.baseUrl}/storage/app/public/notification/${message.data['image']}' : null;
 
-      if (image != null && image.isNotEmpty) {
-        try {
-          await showBigPictureNotificationHiddenLargeIcon(
-              title, body, notificationBody, image, fln);
-        } catch (e) {
+      if(image != null && image.isNotEmpty) {
+        try{
+          await showBigPictureNotificationHiddenLargeIcon(title, body, notificationBody, image, fln);
+        }catch(e) {
           await showBigTextNotification(title, body!, notificationBody, fln);
         }
-      } else {
+      }else {
         await showBigTextNotification(title, body!, notificationBody, fln);
       }
     }
   }
 
-  static Future<void> showTextNotification(
-      String title,
-      String body,
-      NotificationBodyModel notificationBody,
-      FlutterLocalNotificationsPlugin fln) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'devetechno',
-      'devetechno',
-      playSound: true,
-      importance: Importance.max,
-      priority: Priority.max,
-      sound: RawResourceAndroidNotificationSound('notification'),
+  static Future<void> showTextNotification(String title, String body, NotificationBodyModel notificationBody, FlutterLocalNotificationsPlugin fln) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      '6ammart', AppConstants.appName, playSound: true,
+      importance: Importance.max, priority: Priority.max, sound: RawResourceAndroidNotificationSound('notification'),
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await fln.show(0, title, body, platformChannelSpecifics,
-        payload: jsonEncode(notificationBody.toJson()));
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await fln.show(0, title, body, platformChannelSpecifics, payload: jsonEncode(notificationBody.toJson()));
   }
 
-  static Future<void> showBigTextNotification(
-      String? title,
-      String body,
-      NotificationBodyModel notificationBody,
-      FlutterLocalNotificationsPlugin fln) async {
+  static Future<void> showBigTextNotification(String? title, String body, NotificationBodyModel notificationBody, FlutterLocalNotificationsPlugin fln) async {
     BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
-      body,
-      htmlFormatBigText: true,
-      contentTitle: title,
-      htmlFormatContentTitle: true,
+      body, htmlFormatBigText: true,
+      contentTitle: title, htmlFormatContentTitle: true,
     );
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'devetechno',
-      'devetechno',
-      importance: Importance.max,
-      styleInformation: bigTextStyleInformation,
-      priority: Priority.max,
-      playSound: true,
+    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      '6ammart', AppConstants.appName, importance: Importance.max,
+      styleInformation: bigTextStyleInformation, priority: Priority.max, playSound: true,
       sound: const RawResourceAndroidNotificationSound('notification'),
     );
-    NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await fln.show(0, title, body, platformChannelSpecifics,
-        payload: jsonEncode(notificationBody.toJson()));
+    NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await fln.show(0, title, body, platformChannelSpecifics, payload: jsonEncode(notificationBody.toJson()));
   }
 
-  static Future<void> showBigPictureNotificationHiddenLargeIcon(
-      String? title,
-      String? body,
-      NotificationBodyModel notificationBody,
-      String image,
-      FlutterLocalNotificationsPlugin fln) async {
+  static Future<void> showBigPictureNotificationHiddenLargeIcon(String? title, String? body, NotificationBodyModel notificationBody, String image, FlutterLocalNotificationsPlugin fln) async {
     final String largeIconPath = await _downloadAndSaveFile(image, 'largeIcon');
-    final String bigPicturePath =
-        await _downloadAndSaveFile(image, 'bigPicture');
-    final BigPictureStyleInformation bigPictureStyleInformation =
-        BigPictureStyleInformation(
-      FilePathAndroidBitmap(bigPicturePath),
-      hideExpandedLargeIcon: true,
-      contentTitle: title,
-      htmlFormatContentTitle: true,
-      summaryText: body,
-      htmlFormatSummaryText: true,
+    final String bigPicturePath = await _downloadAndSaveFile(image, 'bigPicture');
+    final BigPictureStyleInformation bigPictureStyleInformation = BigPictureStyleInformation(
+      FilePathAndroidBitmap(bigPicturePath), hideExpandedLargeIcon: true,
+      contentTitle: title, htmlFormatContentTitle: true,
+      summaryText: body, htmlFormatSummaryText: true,
     );
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'devetechno',
-      'devetechno',
-      largeIcon: FilePathAndroidBitmap(largeIconPath),
-      priority: Priority.max,
-      playSound: true,
-      styleInformation: bigPictureStyleInformation,
-      importance: Importance.max,
+    final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      '6ammart', AppConstants.appName,
+      largeIcon: FilePathAndroidBitmap(largeIconPath), priority: Priority.max, playSound: true,
+      styleInformation: bigPictureStyleInformation, importance: Importance.max,
       sound: const RawResourceAndroidNotificationSound('notification'),
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await fln.show(0, title, body, platformChannelSpecifics,
-        payload: jsonEncode(notificationBody.toJson()));
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await fln.show(0, title, body, platformChannelSpecifics, payload: jsonEncode(notificationBody.toJson()));
   }
 
-  static Future<String> _downloadAndSaveFile(
-      String url, String fileName) async {
+  static Future<String> _downloadAndSaveFile(String url, String fileName) async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final String filePath = '${directory.path}/$fileName';
     final http.Response response = await http.get(Uri.parse(url));
@@ -297,27 +194,21 @@ class NotificationHelper {
 
     switch (type) {
       case 'advertisement':
-        return NotificationBodyModel(
-            notificationType: NotificationType.advertisement,
-            advertisementId: int.tryParse(data['advertisement_id']));
+        return NotificationBodyModel(notificationType: NotificationType.advertisement, advertisementId: int.tryParse(data['advertisement_id']));
       case 'block':
         return NotificationBodyModel(notificationType: NotificationType.block);
       case 'unblock':
-        return NotificationBodyModel(
-            notificationType: NotificationType.unblock);
+        return NotificationBodyModel(notificationType: NotificationType.unblock);
       case 'withdraw':
-        return NotificationBodyModel(
-            notificationType: NotificationType.withdraw);
-      case 'product':
-        return NotificationBodyModel(
-            notificationType: NotificationType.product);
+        return NotificationBodyModel(notificationType: NotificationType.withdraw);
+      case 'product_approve':
+        return NotificationBodyModel(notificationType: NotificationType.product_approve);
+      case 'product_rejected':
+      return NotificationBodyModel(notificationType: NotificationType.product_rejected);
       case 'campaign':
-        return NotificationBodyModel(
-            notificationType: NotificationType.campaign,
-            campaignId: int.tryParse(data['data_id']));
+        return NotificationBodyModel(notificationType: NotificationType.campaign, campaignId: int.tryParse(data['data_id']));
       case 'subscription':
-        return NotificationBodyModel(
-            notificationType: NotificationType.subscription);
+      return NotificationBodyModel(notificationType: NotificationType.subscription);
       case 'new_order':
       case 'New order placed':
       case 'order_status':
@@ -325,13 +216,11 @@ class NotificationHelper {
       case 'message':
         return _handleMessageNotification(data);
       default:
-        return NotificationBodyModel(
-            notificationType: NotificationType.general);
+        return NotificationBodyModel(notificationType: NotificationType.general);
     }
   }
 
-  static NotificationBodyModel _handleOrderNotification(
-      Map<String, dynamic> data) {
+  static NotificationBodyModel _handleOrderNotification(Map<String, dynamic> data) {
     final orderId = data['order_id'];
     return NotificationBodyModel(
       orderId: int.tryParse(orderId) ?? 0,
@@ -339,24 +228,19 @@ class NotificationHelper {
     );
   }
 
-  static NotificationBodyModel _handleMessageNotification(
-      Map<String, dynamic> data) {
+  static NotificationBodyModel _handleMessageNotification(Map<String, dynamic> data) {
     final orderId = data['order_id'];
     final conversationId = data['conversation_id'];
     final senderType = data['sender_type'];
 
     return NotificationBodyModel(
-      orderId:
-          orderId != null && orderId.isNotEmpty ? int.tryParse(orderId) : null,
-      conversationId: conversationId != null && conversationId.isNotEmpty
-          ? int.tryParse(conversationId)
-          : null,
+      orderId: orderId != null && orderId.isNotEmpty ? int.tryParse(orderId) : null,
+      conversationId: conversationId != null && conversationId.isNotEmpty ? int.tryParse(conversationId) : null,
       notificationType: NotificationType.message,
-      type: senderType == AppConstants.deliveryMan
-          ? AppConstants.deliveryMan
-          : AppConstants.customer,
+      type: senderType == AppConstants.deliveryMan ? AppConstants.deliveryMan : AppConstants.customer,
     );
   }
+
 }
 
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {

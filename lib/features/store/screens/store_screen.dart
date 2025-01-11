@@ -125,85 +125,79 @@ class _StoreScreenState extends State<StoreScreen> with TickerProviderStateMixin
                     bottomRight: Radius.circular(Dimensions.radiusLarge),
                   ),
                 ),
-                child: Row(children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                    child: CustomImageWidget(
-                      image: '${store.coverPhotoFullUrl}',
-                      height: 70, width: 80, fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: Dimensions.paddingSizeDefault),
-
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text(
-                      store.name ?? '', style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
-                      maxLines: 1, overflow: TextOverflow.ellipsis,
-                    ),
-
-                    Text(
-                      store.address ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
-                    ),
-
-                    Row(children: [
-                      Icon(Icons.star_rounded, color: Theme.of(context).hintColor, size: 18),
-                      Text(
-                        store.avgRating!.toStringAsFixed(1),
-                        style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
+                child: Column(children: [
+                  Row(children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                      child: CustomImageWidget(
+                        image: '${store.coverPhotoFullUrl}',
+                        height: 70, width: 80, fit: BoxFit.cover,
                       ),
-                      const SizedBox(width: Dimensions.paddingSizeSmall),
-                      Text(
-                        '${store.ratingCount ?? 0} ${'ratings'.tr}',
-                        style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).disabledColor),
-                      ),
-                    ]),
+                    ),
+                    const SizedBox(width: Dimensions.paddingSizeDefault),
 
-                    store.discount != null ? Container(
-                      width: context.width,
-                      margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusSmall), color: Theme.of(context).primaryColor),
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        store.name ?? '', style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
+                      ),
+
+                      Text(
+                        store.address ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
+                      ),
+
+                      Row(children: [
+                        Icon(Icons.star_rounded, color: Theme.of(context).hintColor, size: 18),
                         Text(
-                          '${store.discount!.discount}% ${'off'.tr}',
-                          style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).cardColor),
+                          store.avgRating!.toStringAsFixed(1),
+                          style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
                         ),
+                        const SizedBox(width: Dimensions.paddingSizeSmall),
                         Text(
-                          '${'enjoy'.tr} ${store.discount!.discount}% ${Get.find<SplashController>().configModel!.moduleConfig!.module!.showRestaurantText! ? 'off_on_all_foods'.tr : 'off_on_all_items'.tr}',
-                          style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).cardColor),
+                          '${store.ratingCount ?? 0} ${'ratings'.tr}',
+                          style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).disabledColor),
                         ),
-                        SizedBox(height: (store.discount!.minPurchase != 0 || store.discount!.maxDiscount != 0) ? 5 : 0),
-                        store.discount!.minPurchase != 0 ? Text(
-                          '[ ${'minimum_purchase'.tr}: ${PriceConverterHelper.convertPrice(store.discount!.minPurchase)} ]',
-                          style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).cardColor),
-                        ) : const SizedBox(),
-                        store.discount!.maxDiscount != 0 ? Text(
-                          '[ ${'maximum_discount'.tr}: ${PriceConverterHelper.convertPrice(store.discount!.maxDiscount)} ]',
-                          style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall, color: Theme.of(context).cardColor),
-                        ) : const SizedBox(),
                       ]),
-                    ) : const SizedBox(),
 
-                    (store.delivery! && store.freeDelivery!) ? Text(
-                      'free_delivery'.tr,
-                      style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
-                    ) : const SizedBox(),
-                  ])),
+                    ])),
 
-                  InkWell(
-                    onTap: () => Get.toNamed(RouteHelper.getAnnouncementRoute(announcementStatus: store.isAnnouncementActive!, announcementMessage: store.announcementMessage ?? '')),
-                    child: Container(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
-                        border: Border.all(color: Theme.of(context).cardColor, width: 2),
-                        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
+                    InkWell(
+                      onTap: () => Get.toNamed(RouteHelper.getAnnouncementRoute(announcementStatus: store.isAnnouncementActive!, announcementMessage: store.announcementMessage ?? '')),
+                      child: Container(
+                        padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).primaryColor,
+                          border: Border.all(color: Theme.of(context).cardColor, width: 2),
+                          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
+                        ),
+                        child: Image.asset(Images.announcementIcon, height: 20, width: 20, color: Theme.of(context).cardColor),
                       ),
-                      child: Image.asset(Images.announcementIcon, height: 20, width: 20, color: Theme.of(context).cardColor),
                     ),
-                  ),
+                  ]),
+                  SizedBox(height: store.discount != null ? Dimensions.paddingSizeDefault : 0),
+
+                  store.discount != null ? Container(
+                    width: context.width,
+                    margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusSmall), color: Theme.of(context).primaryColor),
+                    padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                    child: Text(
+                      '${store.discount!.discount}% ${'off'.tr} ${'enjoy'.tr} ${store.discount!.discount}% ${Get.find<SplashController>().configModel!.moduleConfig!.module!.showRestaurantText! ? 'off_on_all_foods'.tr : 'off_on_all_items'.tr} '
+                      '${store.discount!.minPurchase != 0 ? '[ ${'minimum_purchase'.tr}: ${PriceConverterHelper.convertPrice(store.discount!.minPurchase)} ]' : ''} '
+                      '${store.discount!.maxDiscount != 0 ? '[ ${'maximum_discount'.tr}: ${PriceConverterHelper.convertPrice(store.discount!.maxDiscount)} ]' : ''}',
+                      style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Colors.white),
+                      textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis,
+                    ),
+                  ) : const SizedBox(),
+                  SizedBox(height: (store.delivery! && store.freeDelivery!) ? Dimensions.paddingSizeSmall : 0),
+
+                  (store.delivery! && store.freeDelivery!) ? Text(
+                    'free_delivery'.tr,
+                    style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor),
+                  ) : const SizedBox(),
+
                 ]),
               ))),
 

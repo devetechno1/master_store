@@ -1,12 +1,15 @@
+import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sixam_mart_store/features/profile/domain/models/profile_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/band_model.dart';
 import 'package:sixam_mart_store/features/store/domain/models/review_model.dart';
+import 'package:sixam_mart_store/features/store/domain/models/suitable_tag_model.dart';
 import 'package:sixam_mart_store/interface/repository_interface.dart';
 import 'package:sixam_mart_store/features/store/domain/models/item_model.dart';
 
 abstract class StoreRepositoryInterface<T> extends RepositoryInterface<Schedules> {
   Future<dynamic> getItemList(String offset, String type);
+  Future<dynamic> getStockItemList(String offset);
   Future<dynamic> getPendingItemList(String offset, String type);
   Future<dynamic> getPendingItemDetails(int itemId);
   Future<dynamic> getAttributeList(Item? item);
@@ -25,4 +28,6 @@ abstract class StoreRepositoryInterface<T> extends RepositoryInterface<Schedules
   Future<List<String?>?> getNutritionSuggestionList();
   Future<List<String?>?> getAllergicIngredientsSuggestionList();
   Future<List<String?>?> getGenericNameSuggestionList();
+  Future<Response> stockUpdate(Map<String, String> data);
+  Future<List<SuitableTagModel>?> getSuitableTagList();
 }

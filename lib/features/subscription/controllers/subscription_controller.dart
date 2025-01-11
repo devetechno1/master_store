@@ -80,6 +80,9 @@ class SubscriptionController extends GetxController implements GetxService {
   bool _searchMode = false;
   bool get searchMode => _searchMode;
 
+  bool _isDigitalPaymentSelect = false;
+  bool get isDigitalPaymentSelect => _isDigitalPaymentSelect;
+
   void isSelectChange(bool status){
     _isSelect = status;
     update();
@@ -87,6 +90,7 @@ class SubscriptionController extends GetxController implements GetxService {
 
   void changeDigitalPaymentName(String? name, {bool canUpdate = true}){
     _digitalPaymentName = name;
+    _isDigitalPaymentSelect = true;
     if(canUpdate) {
       update();
     }

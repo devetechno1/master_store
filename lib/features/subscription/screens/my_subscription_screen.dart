@@ -63,6 +63,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> with Ticker
     return GetBuilder<SubscriptionController>(builder: (subscriptionController) {
 
       bool businessIsCommission = subscriptionController.profileModel!.stores![0].storeBusinessModel == 'commission';
+      bool businessIsNone = subscriptionController.profileModel!.stores![0].storeBusinessModel == 'none';
+      bool businessIsUnsubscribed = subscriptionController.profileModel!.stores![0].storeBusinessModel == 'unsubscribed';
 
       return PopScope(
         canPop: Navigator.canPop(context),
@@ -128,6 +130,61 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> with Ticker
               padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
               child: CustomButtonWidget(
                 buttonText: 'change_business_plan'.tr,
+                radius: Dimensions.radiusDefault,
+                height: 55,
+                onPressed: () {
+                  showCustomBottomSheet(
+                    child: ChangeSubscriptionPlanBottomSheet(businessIsCommission: businessIsCommission),
+                  );
+                },
+              ),
+            ),
+
+          ]) : (businessIsNone || (businessIsUnsubscribed && (subscriptionController.profileModel?.subscription == null))) ? Column(children: [
+
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(Dimensions.paddingSizeExtraLarge),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                ),
+                child: Column(children: [
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(Dimensions.paddingSizeExtraLarge),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                      color: Theme.of(context).colorScheme.error.withOpacity(0.6),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'you_have_no_business_plan'.tr,
+                          style: robotoBold.copyWith(color: Theme.of(context).cardColor, fontSize: Dimensions.fontSizeLarge),
+                        ),
+                        const SizedBox(height: Dimensions.paddingSizeDefault),
+
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: context.width * 0.05),
+                          child: Text(
+                            "chose_a_business_plan_from_the_list_so_that_you_get_more_options_to_join_the_business_for_the_growth_and_success".tr,
+                            style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeDefault, color: Theme.of(context).cardColor, height: 2), textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ]),
+              ),
+            ),
+
+            Container(
+              padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+              child: CustomButtonWidget(
+                buttonText: (businessIsNone || (businessIsUnsubscribed && (subscriptionController.profileModel?.subscription == null))) ? 'chose_business_plan'.tr : 'change_business_plan'.tr,
                 radius: Dimensions.radiusDefault,
                 height: 55,
                 onPressed: () {

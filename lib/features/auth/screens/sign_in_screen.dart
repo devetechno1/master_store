@@ -188,7 +188,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     authController.vendorTypeIndex == 1 ? const SizedBox() : TextButton(
                       onPressed: () => Get.toNamed(RouteHelper.getForgotPassRoute()),
-                      child: Text('forgot_password_q'.tr),
+                      child: Text('${'forgot_password'.tr}?'),
                     ),
 
                   ]),
@@ -208,7 +208,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       Get.toNamed(RouteHelper.getRestaurantRegistrationRoute());
                     },
                     child: RichText(text: TextSpan(children: [
-                      TextSpan(text: '${'join_as'.tr}', style: robotoRegular.copyWith(color: Theme.of(context).disabledColor)),
+                      TextSpan(text: '${'join_as'.tr} ', style: robotoRegular.copyWith(color: Theme.of(context).disabledColor)),
                       TextSpan(
                         text: 'store'.tr,
                         style: robotoMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),

@@ -6,6 +6,7 @@ import 'package:sixam_mart_store/features/auth/domain/services/auth_service_inte
 import 'package:sixam_mart_store/features/business/domain/models/package_model.dart';
 import 'package:sixam_mart_store/features/business/screens/subscription_payment_screen.dart';
 import 'package:sixam_mart_store/features/profile/controllers/profile_controller.dart';
+import 'package:sixam_mart_store/helper/route_helper.dart';
 
 class AuthService implements AuthServiceInterface {
   final AuthRepositoryInterface authRepositoryInterface;
@@ -115,8 +116,18 @@ class AuthService implements AuthServiceInterface {
       if(response.body['subscribed'] != null){
         int? storeId = response.body['subscribed']['store_id'];
         int? packageId = response.body['subscribed']['package_id'];
-        Get.to(()=> SubscriptionPaymentScreen(storeId: storeId!, packageId: packageId!));
-        responseModel = ResponseModel(false, 'please_select_payment_method'.tr);
+
+        if(packageId == null) {
+
+          saveUserToken(response.body['subscribed']['token'], response.body['subscribed']['zone_wise_topic'], type);
+          await updateToken();
+          await Get.find<ProfileController>().getProfile();
+
+          Get.toNamed(RouteHelper.getMySubscriptionRoute(fromNotification: true));
+        } else {
+          Get.to(()=> SubscriptionPaymentScreen(storeId: storeId!, packageId: packageId));
+          responseModel = ResponseModel(false, 'please_select_payment_method'.tr);
+        }
       }else{
         saveUserToken(response.body['token'], response.body['zone_wise_topic'], type);
         await updateToken();

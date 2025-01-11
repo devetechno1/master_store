@@ -39,7 +39,7 @@ class _PosScreenState extends State<PosScreen> {
           onPressed: () => Get.back(),
         ),
         title: TypeAheadField(
-          builder: (context, controller, focusNode) => TextField(
+          textFieldConfiguration: TextFieldConfiguration(
             controller: _searchController,
             textInputAction: TextInputAction.search,
             autofocus: false,
@@ -86,7 +86,7 @@ class _PosScreenState extends State<PosScreen> {
               ]),
             );
           },
-          onSelected: (Item suggestion) {
+          onSuggestionSelected: (Item suggestion) {
             _searchController.text = '';
             Get.bottomSheet(ItemBottomSheetWidget(item: suggestion));
           },
